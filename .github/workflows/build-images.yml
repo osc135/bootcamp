@@ -43,6 +43,13 @@ jobs:
           platforms: linux/arm64
           tags: ghcr.io/osc135/bootcamp-frontend:pr-${{ github.event.number }}
 
+      - name: Create Replicated release candidate
+        uses: replicatedhq/replicated-actions/create-release@main
+        with:
+          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
+          app-slug: bootcamp-halibut
+          yaml-dir: .
+
   build-release:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -82,3 +89,19 @@ jobs:
           tags: |
             ghcr.io/osc135/bootcamp-frontend:latest
             ghcr.io/osc135/bootcamp-frontend:sha-${{ github.sha }}
+
+      - name: Create Replicated release
+        id: create-release
+        uses: replicatedhq/replicated-actions/create-release@main
+        with:
+          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
+          app-slug: bootcamp-halibut
+          yaml-dir: .
+
+      - name: Promote to Unstable channel
+        uses: replicatedhq/replicated-actions/promote-release@main
+        with:
+          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
+          app-slug: bootcamp-halibut
+          channel-slug: unstable
+          release-sequence: ${{ steps.create-release.outputs.release-sequence }}
