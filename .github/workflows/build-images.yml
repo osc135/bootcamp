@@ -26,7 +26,7 @@ jobs:
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.Replicated_Bootcamp }}
 
@@ -74,7 +74,7 @@ jobs:
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.Replicated_Bootcamp }}
 
