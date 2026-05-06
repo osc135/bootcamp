@@ -1,0 +1,5 @@
+appSlug: "bootcamp-halibut"
+charts:
+  - path: ./helm
+manifests:
+  - ./manifests/*.yaml
