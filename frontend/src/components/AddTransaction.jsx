@@ -30,7 +30,7 @@ function AddTransaction({ onAdded }) {
     <section className="card">
       <h3>Add Transaction</h3>
       <form onSubmit={handleSubmit} className="transaction-form">
-        <div>
+        <div className="form-group" style={{ marginBottom: 0 }}>
           <label>Category</label>
           <select value={category} onChange={(e) => setCategory(e.target.value)}>
             <option value="needs">Needs</option>
@@ -38,15 +38,15 @@ function AddTransaction({ onAdded }) {
             <option value="savings">Savings</option>
           </select>
         </div>
-        <div>
+        <div className="form-group" style={{ marginBottom: 0 }}>
           <label>Amount ($)</label>
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required placeholder="0.00" />
         </div>
-        <div>
+        <div className="form-group" style={{ marginBottom: 0 }}>
           <label>Description</label>
-          <input value={description} onChange={(e) => setDescription(e.target.value)} />
+          <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What was this for?" />
         </div>
-        <button type="submit">Add</button>
+        <button type="submit" className="btn-primary">Add</button>
       </form>
     </section>
   )

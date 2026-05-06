@@ -9,7 +9,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 function Dashboard() {
   const { token, logout } = useAuth()
   const [dashboard, setDashboard] = useState(null)
-  const [budget, setBudget] = useState(null)
   const [income, setIncome] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -31,23 +30,8 @@ function Dashboard() {
     }
   }
 
-  const fetchBudget = async () => {
-    try {
-      const res = await fetch(`${API_URL}/budget`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        setBudget(data)
-      }
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   useEffect(() => {
     fetchDashboard()
-    fetchBudget()
   }, [token])
 
   const handleSetBudget = async (e) => {
@@ -64,31 +48,40 @@ function Dashboard() {
     })
     setIncome('')
     fetchDashboard()
-    fetchBudget()
   }
 
-  if (loading) return <div className="container">Loading...</div>
+  if (loading) return (
+    <div className="container">
+      <div className="empty-state">
+        <p>Loading your budget...</p>
+      </div>
+    </div>
+  )
 
   return (
     <div className="container">
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <header className="app-header">
         <h1>Budget Tracker</h1>
-        <button onClick={logout}>Logout</button>
+        <button onClick={logout} className="btn-secondary">Logout</button>
       </header>
 
       {!dashboard && (
         <section className="card">
-          <h2>Set Up Your Budget</h2>
-          <form onSubmit={handleSetBudget}>
-            <label>Monthly Post-Tax Income ($)</label>
-            <input
-              type="number"
-              value={income}
-              onChange={(e) => setIncome(e.target.value)}
-              placeholder="e.g. 5000"
-              required
-            />
-            <button type="submit">Create Budget</button>
+          <div className="auth-header" style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
+            <h2 style={{ margin: 0 }}>Set Up Your Budget</h2>
+            <p style={{ margin: '0.25rem 0 0 0' }}>Enter your monthly post-tax income to get started</p>
+          </div>
+          <form onSubmit={handleSetBudget} className="transaction-form" style={{ maxWidth: '400px' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <input
+                type="number"
+                value={income}
+                onChange={(e) => setIncome(e.target.value)}
+                placeholder="e.g. 5000"
+                required
+              />
+            </div>
+            <button type="submit" className="btn-primary">Create Budget</button>
           </form>
         </section>
       )}
@@ -102,15 +95,20 @@ function Dashboard() {
           <section className="card">
             <h3>Transaction History</h3>
             {dashboard.transactions.length === 0 ? (
-              <p>No transactions yet.</p>
+              <div className="empty-state">
+                <p>No transactions yet. Add your first one above!</p>
+              </div>
             ) : (
               <ul className="transaction-list">
                 {dashboard.transactions.map((tx) => (
                   <li key={tx.id}>
-                    <span className={`badge ${tx.category}`}>{tx.category}</span>
-                    <span>${tx.amount.toFixed(2)}</span>
-                    <span>{tx.description || '-'}</span>
+                    <div className="transaction-info">
+                      <span className={`badge ${tx.category}`}>{tx.category}</span>
+                      <span className="transaction-desc">{tx.description || 'No description'}</span>
+                    </div>
+                    <span className="transaction-amount">${tx.amount.toFixed(2)}</span>
                     <button
+                      className="btn-danger"
                       onClick={async () => {
                         await fetch(`${API_URL}/budget/transactions/${tx.id}`, {
                           method: 'DELETE',

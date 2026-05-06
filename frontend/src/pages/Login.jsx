@@ -32,21 +32,39 @@ function Login() {
   }
 
   return (
-    <div className="auth-container">
-      <h2>Login</h2>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Username</label>
-          <input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your budget tracker</p>
         </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <p>Don&apos;t have an account? <Link to="/register">Register</Link></p>
+        {error && <div className="error-banner">{error}</div>}
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input 
+              id="username" 
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)} 
+              required 
+              placeholder="Enter your username"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input 
+              id="password" 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              required 
+              placeholder="Enter your password"
+            />
+          </div>
+          <button type="submit" className="btn-primary btn-full">Sign In</button>
+        </form>
+        <p className="auth-footer">Don&apos;t have an account? <Link to="/register">Create one</Link></p>
+      </div>
     </div>
   )
 }

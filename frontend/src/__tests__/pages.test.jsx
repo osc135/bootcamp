@@ -30,7 +30,7 @@ describe('Login', () => {
         </AuthContext.Provider>
       </BrowserRouter>
     )
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
   })
 
   it('submits login and navigates on success', async () => {
@@ -49,7 +49,7 @@ describe('Login', () => {
 
     fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'alice' } })
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'secret' } })
-    fireEvent.click(screen.getByRole('button', { name: /login/i }))
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }))
 
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith('token123', { username: 'alice' })
@@ -67,30 +67,40 @@ describe('Register', () => {
   it('renders register form', () => {
     render(
       <BrowserRouter>
-        <Register />
+        <AuthContext.Provider value={{ login: mockLogin }}>
+          <Register />
+        </AuthContext.Provider>
       </BrowserRouter>
     )
-    expect(screen.getByRole('button', { name: /register/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument()
   })
 
-  it('navigates to login after successful registration', async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ id: 1, username: 'alice' }),
-    })
+  it('auto-logs in after successful registration', async () => {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: 1, username: 'alice' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ access_token: 'token123' }),
+      })
 
     render(
       <BrowserRouter>
-        <Register />
+        <AuthContext.Provider value={{ login: mockLogin }}>
+          <Register />
+        </AuthContext.Provider>
       </BrowserRouter>
     )
 
     fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'alice' } })
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'secret' } })
-    fireEvent.click(screen.getByRole('button', { name: /register/i }))
+    fireEvent.click(screen.getByRole('button', { name: /create account/i }))
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/login')
+      expect(mockLogin).toHaveBeenCalledWith('token123', { username: 'alice' })
+      expect(mockNavigate).toHaveBeenCalledWith('/')
     })
   })
 })

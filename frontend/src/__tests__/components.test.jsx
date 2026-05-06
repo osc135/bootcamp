@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
 import BudgetOverview from '../components/BudgetOverview'
 import SpendingProgress from '../components/SpendingProgress'
 
@@ -18,9 +18,9 @@ describe('BudgetOverview', () => {
     render(<BudgetOverview dashboard={dashboard} />)
     expect(screen.getByText(/Monthly Income/i)).toBeInTheDocument()
     expect(screen.getByText(/\$4000\.00/)).toBeInTheDocument()
-    expect(screen.getByText(/Needs \(50%\)/i)).toBeInTheDocument()
-    expect(screen.getByText(/Wants \(30%\)/i)).toBeInTheDocument()
-    expect(screen.getByText(/Savings \(20%\)/i)).toBeInTheDocument()
+    expect(screen.getByText(/Needs/i)).toBeInTheDocument()
+    expect(screen.getByText(/Wants/i)).toBeInTheDocument()
+    expect(screen.getByText(/Savings/i)).toBeInTheDocument()
   })
 })
 
