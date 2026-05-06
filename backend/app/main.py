@@ -21,3 +21,7 @@ app.include_router(budget.router)
 @app.get("/")
 def read_root():
     return {"message": "Budget Tracker API"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
