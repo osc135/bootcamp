@@ -46,6 +46,18 @@ jobs:
           platforms: linux/arm64
           tags: ghcr.io/osc135/bootcamp-frontend:pr-${{ github.event.number }}
 
+      - name: Debug - verify files exist
+        run: |
+          echo "PWD: $(pwd)"
+          echo "--- Root files ---"
+          ls -la
+          echo "--- .replicated contents ---"
+          cat .replicated || echo "NOT FOUND"
+          echo "--- manifests/ ---"
+          ls -la manifests/ || echo "NOT FOUND"
+          echo "--- helm/ ---"
+          ls -la helm/ || echo "NOT FOUND"
+
       - name: Install Replicated CLI
         run: |
           version=$(curl -s https://api.github.com/repos/replicatedhq/replicated/releases/latest | grep -m1 -Po '"tag_name":\s*"v\K[^"]+')
@@ -97,6 +109,18 @@ jobs:
           tags: |
             ghcr.io/osc135/bootcamp-frontend:latest
             ghcr.io/osc135/bootcamp-frontend:sha-${{ github.sha }}
+
+      - name: Debug - verify files exist
+        run: |
+          echo "PWD: $(pwd)"
+          echo "--- Root files ---"
+          ls -la
+          echo "--- .replicated contents ---"
+          cat .replicated || echo "NOT FOUND"
+          echo "--- manifests/ ---"
+          ls -la manifests/ || echo "NOT FOUND"
+          echo "--- helm/ ---"
+          ls -la helm/ || echo "NOT FOUND"
 
       - name: Install Replicated CLI
         run: |
