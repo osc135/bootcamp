@@ -53,15 +53,19 @@ frontend:
   apiUrl: "http://budget-tracker-backend:8000"
 
 ingress:
-  enabled: false
-  className: ""
-  annotations: {}
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
-    - host: chart-example.local
+    - host: budget.local
       paths:
         - path: /
           pathType: Prefix
-  tls: []
+  tls:
+    - secretName: budget-tls
+      hosts:
+        - budget.local
 
 postgresql:
   enabled: false
