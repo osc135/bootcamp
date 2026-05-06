@@ -1,0 +1,11 @@
+apiVersion: kots.io/v1beta1
+kind: Application
+metadata:
+  name: bootcamp-halibut
+spec:
+  title: Budget Tracker
+  icon: https://raw.githubusercontent.com/osc135/bootcamp/main/plan.md
+  statusInformers:
+    - deployment/budget-tracker-backend
+    - deployment/budget-tracker-frontend
+  graphs: []
