@@ -4,7 +4,7 @@ import BudgetOverview from '../components/BudgetOverview'
 import AddTransaction from '../components/AddTransaction'
 import SpendingProgress from '../components/SpendingProgress'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 function Dashboard() {
   const { token, logout } = useAuth()

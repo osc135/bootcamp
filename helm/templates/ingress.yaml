@@ -28,6 +28,29 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
+          # API routes go to backend
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "budget-tracker.backend.fullname" $ }}
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /budget
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "budget-tracker.backend.fullname" $ }}
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "budget-tracker.backend.fullname" $ }}
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          # Everything else goes to frontend
           {{- range .paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
