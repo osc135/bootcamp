@@ -58,6 +58,11 @@ jobs:
           echo "--- helm/ ---"
           ls -la helm/ || echo "NOT FOUND"
 
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'latest'
+
       - name: Install Replicated CLI
         run: |
           version=$(curl -s https://api.github.com/repos/replicatedhq/replicated/releases/latest | grep -m1 -Po '"tag_name":\s*"v\K[^"]+')
@@ -121,6 +126,11 @@ jobs:
           ls -la manifests/ || echo "NOT FOUND"
           echo "--- helm/ ---"
           ls -la helm/ || echo "NOT FOUND"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'latest'
 
       - name: Install Replicated CLI
         run: |
