@@ -10,12 +10,15 @@ env:
   REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_TOKEN }}
 
 jobs:
-  build-pr:
+  build-images-pr:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    strategy:
+      matrix:
+        component: [backend, frontend]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,21 +33,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.Replicated_Bootcamp }}
 
-      - name: Build and push backend
+      - name: Build and push ${{ matrix.component }}
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./${{ matrix.component }}
           push: true
           platforms: linux/x86_64
-          tags: ghcr.io/osc135/bootcamp-backend:pr-${{ github.event.number }}
+          tags: ghcr.io/osc135/bootcamp-${{ matrix.component }}:pr-${{ github.event.number }}
 
-      - name: Build and push frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          push: true
-          platforms: linux/x86_64
-          tags: ghcr.io/osc135/bootcamp-frontend:pr-${{ github.event.number }}
+  create-release-pr:
+    if: github.event_name == 'pull_request'
+    needs: build-images-pr
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Debug - verify files exist
         run: |
@@ -80,12 +86,15 @@ jobs:
         run: |
           replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 0.0.1-pr${{ github.event.number }} --lint --yaml-dir ./manifests
 
-  build-release:
+  build-images-release:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    strategy:
+      matrix:
+        component: [backend, frontend]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,25 +109,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.Replicated_Bootcamp }}
 
-      - name: Build and push backend
+      - name: Build and push ${{ matrix.component }}
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./${{ matrix.component }}
           push: true
           platforms: linux/x86_64
           tags: |
-            ghcr.io/osc135/bootcamp-backend:latest
-            ghcr.io/osc135/bootcamp-backend:sha-${{ github.sha }}
+            ghcr.io/osc135/bootcamp-${{ matrix.component }}:latest
+            ghcr.io/osc135/bootcamp-${{ matrix.component }}:sha-${{ github.sha }}
 
-      - name: Build and push frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          push: true
-          platforms: linux/x86_64
-          tags: |
-            ghcr.io/osc135/bootcamp-frontend:latest
-            ghcr.io/osc135/bootcamp-frontend:sha-${{ github.sha }}
+  create-release:
+    if: github.event_name == 'push'
+    needs: build-images-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Debug - verify files exist
         run: |
@@ -128,7 +138,7 @@ jobs:
           echo "--- .replicated contents ---"
           cat .replicated || echo "NOT FOUND"
           echo "--- manifests/ ---"
-          ls -la manifests/ || echo "NOT FOUND" 
+          ls -la manifests/ || echo "NOT FOUND"
           echo "--- helm/ ---"
           ls -la helm/ || echo "NOT FOUND"
 
