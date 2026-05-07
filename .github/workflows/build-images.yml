@@ -78,7 +78,7 @@ jobs:
 
       - name: Create Replicated release candidate
         run: |
-          replicated release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 0.0.1-pr${{ github.event.number }} --lint --yaml-dir ./manifests
+          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 0.0.1-pr${{ github.event.number }} --lint --yaml-dir ./manifests
 
   build-release:
     if: github.event_name == 'push'
@@ -152,4 +152,4 @@ jobs:
 
       - name: Create Replicated release and promote to Unstable
         run: |
-          replicated release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 1.0.0-sha${{ github.sha }} --promote unstable --lint --yaml-dir ./manifests
+          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 1.0.0-sha${{ github.sha }} --promote unstable --lint --yaml-dir ./manifests
