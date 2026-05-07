@@ -128,7 +128,7 @@ jobs:
           echo "--- .replicated contents ---"
           cat .replicated || echo "NOT FOUND"
           echo "--- manifests/ ---"
-          ls -la manifests/ || echo "NOT FOUND"
+          ls -la manifests/ || echo "NOT FOUND" 
           echo "--- helm/ ---"
           ls -la helm/ || echo "NOT FOUND"
 
@@ -152,4 +152,4 @@ jobs:
 
       - name: Create Replicated release and promote to Unstable
         run: |
-          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 1.0.0-sha${{ github.sha }} --promote unstable --lint --yaml-dir ./manifests
+          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 1.0.0-sha${{ github.sha }} --promote Unstable --lint --yaml-dir ./manifests
