@@ -5,5 +5,8 @@ dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 18.5.0
-digest: sha256:2c4377338ea17baf74d6ff93f63b2aa364aaa0334d43569ad0b95c461945fbaf
-generated: "2026-05-06T12:50:50.542346-05:00"
+- name: replicated-sdk
+  repository: oci://registry.replicated.com/library
+  version: 1.2.0
+digest: sha256:ec96cc6b0b6a14cca372aa07116850fc93c7b28f6a40e398f610fc610e3ad110
+generated: "2026-05-07T15:02:15.965656-05:00"

@@ -12,8 +12,12 @@ spec:
       enabled: repl{{ ConfigOptionEquals "postgres_type" "embedded_postgres" }}
     redis:
       enabled: repl{{ ConfigOptionEquals "redis_type" "embedded_redis" }}
+    replicated-sdk:
+      enabled: true
   builder:
     postgresql:
       enabled: true
     redis:
+      enabled: true
+    replicated-sdk:
       enabled: true
