@@ -1,0 +1,19 @@
+apiVersion: kots.io/v1beta2
+kind: HelmChart
+metadata:
+  name: budget-tracker
+spec:
+  chart:
+    name: budget-tracker
+    chartVersion: 0.1.0
+  releaseName: budget-tracker
+  values:
+    postgresql:
+      enabled: repl{{ ConfigOptionEquals "postgres_type" "embedded_postgres" }}
+    redis:
+      enabled: repl{{ ConfigOptionEquals "redis_type" "embedded_redis" }}
+  builder:
+    postgresql:
+      enabled: true
+    redis:
+      enabled: true

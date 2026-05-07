@@ -6,6 +6,9 @@ on:
   push:
     branches: [main]
 
+env:
+  REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_TOKEN }}
+
 jobs:
   build-pr:
     if: github.event_name == 'pull_request'
@@ -32,7 +35,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          platforms: linux/arm64
+          platforms: linux/x86_64
           tags: ghcr.io/osc135/bootcamp-backend:pr-${{ github.event.number }}
 
       - name: Build and push frontend
@@ -40,15 +43,42 @@ jobs:
         with:
           context: ./frontend
           push: true
-          platforms: linux/arm64
+          platforms: linux/x86_64
           tags: ghcr.io/osc135/bootcamp-frontend:pr-${{ github.event.number }}
 
+      - name: Debug - verify files exist
+        run: |
+          echo "PWD: $(pwd)"
+          echo "--- Root files ---"
+          ls -la
+          echo "--- .replicated contents ---"
+          cat .replicated || echo "NOT FOUND"
+          echo "--- manifests/ ---"
+          ls -la manifests/ || echo "NOT FOUND"
+          echo "--- helm/ ---"
+          ls -la helm/ || echo "NOT FOUND"
+
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          helm version
+
+      - name: Install Replicated CLI
+        run: |
+          version=$(curl -s https://api.github.com/repos/replicatedhq/replicated/releases/latest | grep -m1 -Po '"tag_name":\s*"v\K[^"]+')
+          curl -Ls "https://github.com/replicatedhq/replicated/releases/download/v${version}/replicated_${version}_linux_amd64.tar.gz" -o replicated.tar.gz
+          tar xf replicated.tar.gz replicated
+          sudo mv replicated /usr/local/bin/
+          replicated version
+
+      - name: Package Helm chart for release
+        run: |
+          helm package helm/ -u -d manifests/
+          ls -la manifests/
+
       - name: Create Replicated release candidate
-        uses: replicatedhq/replicated-actions/create-release@main
-        with:
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          app-slug: bootcamp-halibut
-          yaml-dir: .
+        run: |
+          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 0.0.1-pr${{ github.event.number }} --lint --yaml-dir ./manifests
 
   build-release:
     if: github.event_name == 'push'
@@ -75,7 +105,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          platforms: linux/arm64
+          platforms: linux/x86_64
           tags: |
             ghcr.io/osc135/bootcamp-backend:latest
             ghcr.io/osc135/bootcamp-backend:sha-${{ github.sha }}
@@ -85,23 +115,41 @@ jobs:
         with:
           context: ./frontend
           push: true
-          platforms: linux/arm64
+          platforms: linux/x86_64
           tags: |
             ghcr.io/osc135/bootcamp-frontend:latest
             ghcr.io/osc135/bootcamp-frontend:sha-${{ github.sha }}
 
-      - name: Create Replicated release
-        id: create-release
-        uses: replicatedhq/replicated-actions/create-release@main
-        with:
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          app-slug: bootcamp-halibut
-          yaml-dir: .
+      - name: Debug - verify files exist
+        run: |
+          echo "PWD: $(pwd)"
+          echo "--- Root files ---"
+          ls -la
+          echo "--- .replicated contents ---"
+          cat .replicated || echo "NOT FOUND"
+          echo "--- manifests/ ---"
+          ls -la manifests/ || echo "NOT FOUND"
+          echo "--- helm/ ---"
+          ls -la helm/ || echo "NOT FOUND"
 
-      - name: Promote to Unstable channel
-        uses: replicatedhq/replicated-actions/promote-release@main
-        with:
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          app-slug: bootcamp-halibut
-          channel-slug: unstable
-          release-sequence: ${{ steps.create-release.outputs.release-sequence }}
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          helm version
+
+      - name: Install Replicated CLI
+        run: |
+          version=$(curl -s https://api.github.com/repos/replicatedhq/replicated/releases/latest | grep -m1 -Po '"tag_name":\s*"v\K[^"]+')
+          curl -Ls "https://github.com/replicatedhq/replicated/releases/download/v${version}/replicated_${version}_linux_amd64.tar.gz" -o replicated.tar.gz
+          tar xf replicated.tar.gz replicated
+          sudo mv replicated /usr/local/bin/
+          replicated version
+
+      - name: Package Helm chart for release
+        run: |
+          helm package helm/ -u -d manifests/
+          ls -la manifests/
+
+      - name: Create Replicated release and promote to Unstable
+        run: |
+          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 1.0.0-sha${{ github.sha }} --promote unstable --lint --yaml-dir ./manifests
