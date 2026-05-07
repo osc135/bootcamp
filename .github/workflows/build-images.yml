@@ -71,9 +71,14 @@ jobs:
           sudo mv replicated /usr/local/bin/
           replicated version
 
+      - name: Package Helm chart for release
+        run: |
+          helm package helm/ -u -d manifests/
+          ls -la manifests/
+
       - name: Create Replicated release candidate
         run: |
-          replicated release create --version 0.0.1-pr${{ github.event.number }} --lint
+          replicated release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 0.0.1-pr${{ github.event.number }} --lint --yaml-dir ./manifests
 
   build-release:
     if: github.event_name == 'push'
@@ -140,6 +145,11 @@ jobs:
           sudo mv replicated /usr/local/bin/
           replicated version
 
+      - name: Package Helm chart for release
+        run: |
+          helm package helm/ -u -d manifests/
+          ls -la manifests/
+
       - name: Create Replicated release and promote to Unstable
         run: |
-          replicated release create --version 1.0.0-sha${{ github.sha }} --promote unstable --lint
+          replicated release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 1.0.0-sha${{ github.sha }} --promote unstable --lint --yaml-dir ./manifests
