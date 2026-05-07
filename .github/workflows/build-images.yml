@@ -63,6 +63,11 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Verify Helm is available
+        run: |
+          which helm
+          helm version
+
       - name: Install Replicated CLI
         run: |
           version=$(curl -s https://api.github.com/repos/replicatedhq/replicated/releases/latest | grep -m1 -Po '"tag_name":\s*"v\K[^"]+')
@@ -131,6 +136,11 @@ jobs:
         uses: azure/setup-helm@v4
         with:
           version: 'latest'
+
+      - name: Verify Helm is available
+        run: |
+          which helm
+          helm version
 
       - name: Install Replicated CLI
         run: |
