@@ -86,4 +86,4 @@ redis:
 
 replicated-sdk:
   enabled: true
-  fullnameOverride: "budget-tracker-sdk"
+  nameOverride: "budget-tracker-sdk"
