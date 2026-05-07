@@ -53,7 +53,7 @@ frontend:
   apiUrl: "http://budget-tracker-backend:8000"
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -83,3 +83,7 @@ redis:
   architecture: standalone
   auth:
     enabled: false
+
+replicated-sdk:
+  enabled: true
+  fullnameOverride: "budget-tracker-sdk"
