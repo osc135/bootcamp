@@ -19,7 +19,8 @@ spec:
     spec:
       initContainers:
         - name: wait-for-backend
-          image: busybox:1.36
+          image: "{{ .Values.frontend.initContainer.image.repository }}:{{ .Values.frontend.initContainer.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.initContainer.image.pullPolicy }}
           command: ['sh', '-c', 'until wget -qO- http://{{ include "budget-tracker.backend.fullname" . }}:{{ .Values.backend.service.port }}/health; do echo "Waiting for backend..."; sleep 2; done']
       containers:
         - name: frontend

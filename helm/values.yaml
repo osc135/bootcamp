@@ -3,9 +3,14 @@ replicaCount: 1
 
 backend:
   image:
-    repository: bootcamp-backend
+    repository: images.budget-helping.com/proxy/bootcamp-halibut/ghcr.io/osc135/bootcamp-backend
     tag: latest
     pullPolicy: IfNotPresent
+  initContainer:
+    image:
+      repository: images.budget-helping.com/proxy/bootcamp-halibut/library/busybox
+      tag: "1.36"
+      pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 8000
@@ -37,9 +42,14 @@ backend:
 
 frontend:
   image:
-    repository: bootcamp-frontend
+    repository: images.budget-helping.com/proxy/bootcamp-halibut/ghcr.io/osc135/bootcamp-frontend
     tag: latest
     pullPolicy: IfNotPresent
+  initContainer:
+    image:
+      repository: images.budget-helping.com/proxy/bootcamp-halibut/library/busybox
+      tag: "1.36"
+      pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 80
@@ -69,6 +79,9 @@ ingress:
 
 postgresql:
   enabled: false
+  image:
+    registry: images.budget-helping.com
+    repository: proxy/bootcamp-halibut/bitnami/postgresql
   auth:
     username: budgetuser
     password: budgetpass
@@ -80,6 +93,9 @@ postgresql:
 
 redis:
   enabled: false
+  image:
+    registry: images.budget-helping.com
+    repository: proxy/bootcamp-halibut/bitnami/redis
   architecture: standalone
   auth:
     enabled: false
@@ -87,3 +103,6 @@ redis:
 replicated-sdk:
   enabled: true
   nameOverride: "budget-tracker-sdk"
+  image:
+    registry: images.budget-helping.com
+    repository: proxy/bootcamp-halibut/docker.io/replicated/replicated-sdk
