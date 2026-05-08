@@ -14,6 +14,10 @@ spec:
       enabled: repl{{ ConfigOptionEquals "redis_type" "embedded_redis" }}
     replicated-sdk:
       enabled: true
+      nameOverride: "budget-tracker-sdk"
+      image:
+        registry: images.budget-helping.com
+        repository: proxy/bootcamp-halibut/docker.io/replicated/replicated-sdk
   builder:
     postgresql:
       enabled: true
