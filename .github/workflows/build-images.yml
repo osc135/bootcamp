@@ -162,4 +162,4 @@ jobs:
 
       - name: Create Replicated release and promote to Unstable
         run: |
-          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version 1.0.0-sha${{ github.sha }} --promote Unstable --lint --yaml-dir ./manifests
+          replicated --debug release create --app 3DMMbzkr9ZBOwosuUy0ydnUVc2w --version ${{ github.run_number }}.0.0 --promote Unstable --lint --yaml-dir ./manifests
